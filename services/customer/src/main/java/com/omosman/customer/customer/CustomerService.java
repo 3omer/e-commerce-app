@@ -35,7 +35,7 @@ public class CustomerService {
         return repository.findAll().stream().map(mapper::fromCustomer).toList();
     }
 
-    /*
+    /**
     * returns null if customer not found
     * */
     public CustomerResponse getCustomerById(String customerId) {

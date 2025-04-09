@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     /**
     * Handle validation errors
     * */
-    @ExceptionHandler
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException exp) {
         var errors = new HashMap<String, String>();
 
