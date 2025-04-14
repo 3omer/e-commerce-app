@@ -1,5 +1,6 @@
 package com.omosman.ecommerce.product;
 
+import com.omosman.ecommerce.category.Category;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,11 +11,15 @@ public class ProductMapper {
                 .description(productRequest.description())
                 .price(productRequest.price())
                 .availableQuantity(productRequest.availableQuantity())
-                .category(productRequest.category())
+                .category(
+                        Category.builder()
+                                .id(productRequest.categoryId())
+                                .build()
+                )
                 .build();
     }
 
-    public ProductResponse fromCustomer(Product product) {
+    public ProductResponse fromProduct(Product product) {
         return new ProductResponse(product.getId(),
                 product.getName(),
                 product.getDescription(),

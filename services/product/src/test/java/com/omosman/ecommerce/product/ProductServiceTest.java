@@ -9,7 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,8 +26,12 @@ class ProductServiceTest {
     @Mock
     private ProductRepository repository;
 
+    @Spy
+    private ProductMapper mapper = new ProductMapper();
+
     @InjectMocks
     private ProductService service;
+
 
     /**
     * when called with a valid request
@@ -31,7 +39,7 @@ class ProductServiceTest {
      * should call the repo to update same products quantities
     * */
     @Test
-    public void purchaseProductsSuccessfully_whenRequestIsValid(){
+    public void processPurchase_purchaseProductsSuccessfully_whenRequestIsValid(){
 
         var category = new Category(1, "c", new ArrayList<>());
 
@@ -57,7 +65,7 @@ class ProductServiceTest {
      * find by ids will return existing ids
      * */
     @Test
-    public void shouldThrowProductNotFoundException_whenSomeProductsAreMissing(){
+    public void processPurchase_shouldThrowProductNotFoundException_whenSomeProductsAreMissing(){
         var category = new Category(1, "c", new ArrayList<>());
 
         var productA = new Product(1, "a", "a", 10,  new BigDecimal(100), category);
@@ -77,7 +85,7 @@ class ProductServiceTest {
     }
 
     @Test
-    public void shouldThrowInsufficientQuantityException_whenSomeQuantitiesAreLow(){
+    public void processPurchase_shouldThrowInsufficientQuantityException_whenSomeQuantitiesAreLow(){
         var category = new Category(1, "c", new ArrayList<>());
 
         var productA = new Product(1, "a", "a", 10,  new BigDecimal(100), category);
@@ -94,4 +102,43 @@ class ProductServiceTest {
                 () -> service.processPurchase(purchaseRequest));
 
     }
+
+    /**
+     * what we want to test?
+     * repository is called with the correct parameters: verify
+     * method return mapped data:
+     * */
+    @Test
+    public void filterProducts_shouldReturnMappedList() {
+
+        var name = "prod";
+        var categoryId = 1;
+        var minPrice = BigDecimal.valueOf(10);
+        var maxPrice = BigDecimal.valueOf(100);
+        var pageable = PageRequest.of(0, 2);
+
+        var categoryA = new Category(1, "category a", new ArrayList<>());
+        var productA = new Product(1, "product a", "desc", 10, BigDecimal.valueOf(10), categoryA);
+        var productB = new Product(2, "product b", "desc", 10, BigDecimal.valueOf(100), categoryA);
+
+
+
+        Page<Product> productPage = new PageImpl<Product>(List.of(productA, productB), pageable, 2);
+
+        // mock behaviour
+        Mockito.when(repository.findByFilter(name, categoryId, minPrice, maxPrice, pageable))
+                .thenReturn(productPage);
+
+        // act
+        var result = service.filterProducts(name, categoryId, minPrice, maxPrice, pageable);
+
+        // assert returned data
+        Assertions.assertEquals(result.size(), 2);
+        Assertions.assertEquals(result.get(0).name(), "product a");
+
+        // verify repo is called with the right params
+        Mockito.verify(repository).findByFilter(name, categoryId, minPrice, maxPrice, pageable);
+
+    }
+
 }

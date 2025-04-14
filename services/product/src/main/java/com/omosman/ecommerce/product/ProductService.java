@@ -3,8 +3,10 @@ package com.omosman.ecommerce.product;
 import com.omosman.ecommerce.exception.InsufficientProductQuantityException;
 import com.omosman.ecommerce.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,15 +18,16 @@ public class ProductService {
     private final ProductRepository repository;
     private final ProductMapper mapper;
 
-    public ProductResponse createProduct(ProductRequest productRequest) {
-        return mapper.fromCustomer(repository.save(mapper.toProduct(productRequest)));
+    public Integer createProduct(ProductRequest productRequest) {
+        var product = mapper.toProduct(productRequest);
+        return repository.save(product).getId();
     }
 
     /**
      * purchase and update quantities in the warehouse
      * throws InsufficientQuantityError, ProductNotFoundError
      */
-    public void processPurchase(List<PurchaseRequest> request) throws InsufficientProductQuantityException, ProductNotFoundException{
+    public void processPurchase(List<PurchaseRequest> request) throws InsufficientProductQuantityException, ProductNotFoundException {
         var productsPurchaseIds = request.stream().map(PurchaseRequest::id).toList();
 
         var foundProducts = repository.findAllById(productsPurchaseIds);
@@ -35,7 +38,7 @@ public class ProductService {
                 .toList();
 
         if (!notFoundIds.isEmpty()) {
-           throw new ProductNotFoundException(String.format("Cannot purchase product(s) with provided IDs: {%s}", notFoundIds));
+            throw new ProductNotFoundException(String.format("Cannot purchase product(s) with provided IDs: {%s}", notFoundIds));
         }
 
         Map<Integer, Integer> requestedQuantities = request.stream()
@@ -43,7 +46,7 @@ public class ProductService {
 
         // quantity checks
         var notAvailableQuantities = foundProducts.stream()
-                .filter(product -> product.getAvailableQuantity() <  requestedQuantities.get(product.getId()))
+                .filter(product -> product.getAvailableQuantity() < requestedQuantities.get(product.getId()))
                 .toList();
 
         if (!notAvailableQuantities.isEmpty()) {
@@ -57,4 +60,20 @@ public class ProductService {
 
         repository.saveAll(updatedProducts);
     }
+
+    public List<ProductResponse> filterProducts(String name, Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, Pageable page) {
+
+        var products = repository.findByFilter(
+                        name,
+                        categoryId,
+                        minPrice,
+                        maxPrice,
+                        page
+                )
+                .map(mapper::fromProduct);
+
+        return products.toList();
+    }
+
+
 }
