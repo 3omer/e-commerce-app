@@ -1,4 +1,4 @@
-package com.omosman.customer.customer;
+package com.omosman.ecommerce.customer;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

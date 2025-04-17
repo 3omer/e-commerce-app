@@ -1,4 +1,4 @@
-package com.omosman.customer;
+package com.omosman.ecommerce;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

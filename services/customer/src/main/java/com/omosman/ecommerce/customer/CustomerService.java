@@ -1,6 +1,6 @@
-package com.omosman.customer.customer;
+package com.omosman.ecommerce.customer;
 
-import com.omosman.customer.exception.CustomerNotFoundException;
+import com.omosman.ecommerce.exception.CustomerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.omosman.customer.customer;
+package com.omosman.ecommerce.customer;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

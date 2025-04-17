@@ -1,6 +1,6 @@
-package com.omosman.customer.handler;
+package com.omosman.ecommerce.handler;
 
-import com.omosman.customer.exception.CustomerNotFoundException;
+import com.omosman.ecommerce.exception.CustomerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

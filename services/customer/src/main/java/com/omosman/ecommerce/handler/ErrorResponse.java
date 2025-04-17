@@ -1,4 +1,4 @@
-package com.omosman.customer.handler;
+package com.omosman.ecommerce.handler;
 
 import java.util.Map;
 

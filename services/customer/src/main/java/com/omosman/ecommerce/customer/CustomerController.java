@@ -1,4 +1,4 @@
-package com.omosman.customer.customer;
+package com.omosman.ecommerce.customer;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
