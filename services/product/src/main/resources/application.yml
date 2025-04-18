@@ -1,5 +1,10 @@
 spring:
   application:
     name: product-service
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   config:
     import: optional:configserver:http://localhost:8888

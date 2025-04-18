@@ -1,7 +1,5 @@
 package com.omosman.ecommerce.product;
 
-import com.omosman.ecommerce.category.Category;
-
 import java.math.BigDecimal;
 
 public record ProductResponse(
@@ -10,6 +8,6 @@ public record ProductResponse(
         String description,
         double availableQuantity,
         BigDecimal price,
-        Category category
+        Integer categoryId
 ) {
 }
