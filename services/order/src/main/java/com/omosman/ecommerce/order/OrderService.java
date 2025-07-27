@@ -4,6 +4,8 @@ import com.omosman.ecommerce.customer.CustomerClient;
 import com.omosman.ecommerce.exception.BusinessException;
 import com.omosman.ecommerce.kafka.OrderConfirmation;
 import com.omosman.ecommerce.kafka.OrderProducer;
+import com.omosman.ecommerce.payment.PaymentClient;
+import com.omosman.ecommerce.payment.PaymentRequest;
 import com.omosman.ecommerce.product.ProductClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ public class OrderService {
 
     private final CustomerClient customerClient;
     private final ProductClient productClient;
+
+    private final PaymentClient paymentClient;
     private final OrderRepository repository;
 
     private final OrderProducer orderProducer;
@@ -37,6 +41,15 @@ public class OrderService {
         var order = this.repository.save(mapper.toOrder(request));
 
         // process payment
+        var paymentId = this.paymentClient.requestOrderPayment(new PaymentRequest(
+            null,
+                order.getTotalAmount(),
+                order.getPaymentMethod(),
+                order.getId(),
+                order.getReference(),
+                customer
+        ));
+
         // send the order confirmation
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
