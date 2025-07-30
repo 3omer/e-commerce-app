@@ -1,10 +1,12 @@
 package com.omosman.ecommerce.order;
 
 import com.omosman.ecommerce.orderline.OrderLine;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class OrderMapper {
     public CreateOrderResponse fromOrder(Order order) {
         return new CreateOrderResponse(
